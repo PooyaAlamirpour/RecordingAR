@@ -19,3 +19,11 @@ Click on WampServer icon in right side bottom taskbar. Select the Apache menu  -
   </Directory>
 </VirtualHost>
 ```
+
+Now run __NGROK__ and put below command:
+
+```bash
+ngrok http 12
+```
+
+For using this application you should use SSL. So choose a domain which is __https__.
