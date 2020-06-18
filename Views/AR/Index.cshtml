@@ -97,12 +97,12 @@
             {
                 var aScene = document.querySelector("a-scene").components.screenshot.getCanvas("perspective");
                 var frame = captureVideoFrame("video", "png");
-                aScene = resizeCanvas(aScene, frame.width, frame.height);
+
+                aScene = resizeCanvas(aScene, 640, 640);
 	            frame = frame.dataUri;
 
                 mergeImages([frame, aScene])
                     .then(b64 => {
-
                         $.ajax({
                             url: '@Url.Action("asImage", "Save")',
                             type: "POST",
@@ -114,7 +114,6 @@
                                 alert("ERROR");
                             }
                         });
-
                     });
 
                 //var ctx = canvas[0].getContext('webgl');
