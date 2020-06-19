@@ -44,21 +44,12 @@
 		justify-content: center;
 		align-items: center;
 	}
-
-
 </style>
 
 <body style="margin : 0px; overflow: hidden;">
-    <!-- minimal loader shown until image descriptors are loaded -->
-    <div class="arjs-loader">
-        <div>Loading, please wait...</div>
-    </div>
 
-    @*<div class="proButton" id="btnRecord" onclick="startRecording()">
-            <div class="w3-button w3-xlarge w3-circle w3-red w3-card-4">+</div>
-        </div>*@
     <div class="proButton">
-        <div class="recorder-container">
+        <div class="recorder-container" id="btnRecordScreen">
             <input id="btn" type="checkbox" />
             <label for="btn"></label>
             <div class="time">
@@ -67,7 +58,10 @@
             </div>
         </div>
     </div>
-    
+
+    <div class="arjs-loader">
+        <div>Loading, please wait...</div>
+    </div>
 
     <a-scene vr-mode-ui="enabled: false;"
              renderer="logarithmicDepthBuffer: true;"
@@ -89,6 +83,44 @@
     </a-scene>
 
     <script>
+        var buffer = [];
+        var timer;
+        var recorderButton = document.getElementById('btn');
+
+        recorderButton.onclick = function () {
+            if (recorderButton.checked === true) {
+                var canvas = document.getElementsByClassName("a-canvas");
+                if(canvas.length == 1)
+                {
+                    timer = window.setInterval(() => {
+                        takeScreenShotSeq();
+                        alert('Taked');
+                    }, 500);
+                }
+                else
+                {
+	                alert('It is not loaded.');
+                }
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("asImage", "Save")',
+                    type: "POST",
+                    data: { 'base64image': buffer },
+                    success: function (data) {
+                        alert("OK man 6:45");
+                        clearTimeout(timer);
+                        buffer = [];
+                    },
+                    error: function (xhr, error) {
+                        alert("ERROR");
+                        clearTimeout(timer);
+                        buffer = [];
+                    }
+                });
+            }
+        };
+
         function resizeCanvas(origCanvas, width, height) {
             let resizedCanvas = document.createElement("canvas");
             let resizedContext = resizedCanvas.getContext("2d");
@@ -100,36 +132,17 @@
             return resizedCanvas.toDataURL();
         }
 
-        function startRecording()
-        {
-            var canvas = document.getElementsByClassName("a-canvas");
-            if(canvas.length == 1)
-            {
-                var aScene = document.querySelector("a-scene").components.screenshot.getCanvas("perspective");
-                var frame = captureVideoFrame("video", "png");
+        function takeScreenShotSeq() {
+            var aScene = document.querySelector("a-scene").components.screenshot.getCanvas("perspective");
+            var frame = captureVideoFrame("video", "png");
 
-                aScene = resizeCanvas(aScene, frame.height, frame.width);
-	            frame = frame.dataUri;
-
-                @*mergeImages([frame, aScene])
-                    .then(b64 => {
-                        $.ajax({
-                            url: '@Url.Action("asImage", "Save")',
-                            type: "POST",
-                            data: { 'base64image': b64 },
-                            success: function (data) {
-                                alert("OK man 6:45");
-                            },
-                            error: function (xhr, error) {
-                                alert("ERROR");
-                            }
-                        });
-                    });*@
-            }
-            else
-            {
-	            alert('It is not loaded.');
-            }
+            aScene = resizeCanvas(aScene, frame.height, frame.width);
+            frame = frame.dataUri;
+                    
+            mergeImages([frame, aScene])
+                .then(b64 => {
+                    buffer.push(b64);
+                });
         }
 
         function captureVideoFrame(video, format, width, height) {

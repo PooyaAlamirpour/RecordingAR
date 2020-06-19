@@ -17,12 +17,15 @@ namespace Base64Saver.Controllers
         }
 
         [HttpPost]
-        public void asImage(string base64image)
+        public void asImage(string[] base64image)
         {
-            if (string.IsNullOrEmpty(base64image))
+            if (base64image == null)
                 return;
 
-            var t = base64image.Substring(22);  // remove data:image/png;base64,
+            if (string.IsNullOrEmpty(base64image[0]))
+                return;
+
+            var t = base64image[0].Substring(22);  // remove data:image/png;base64,
 
             byte[] bytes = Convert.FromBase64String(t);
 
