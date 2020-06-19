@@ -98,7 +98,7 @@
                 var aScene = document.querySelector("a-scene").components.screenshot.getCanvas("perspective");
                 var frame = captureVideoFrame("video", "png");
 
-                aScene = resizeCanvas(aScene, 640, 640);
+                aScene = resizeCanvas(aScene, frame.height, frame.width);
 	            frame = frame.dataUri;
 
                 mergeImages([frame, aScene])
