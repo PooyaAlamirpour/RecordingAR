@@ -4,6 +4,7 @@
 }
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="~/Scripts/css/record_button.css">
 
 <script src="https://unpkg.com/merge-images@2.0.0/dist/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
@@ -43,21 +44,31 @@
 		justify-content: center;
 		align-items: center;
 	}
+
+
 </style>
 
 <body style="margin : 0px; overflow: hidden;">
-  <!-- minimal loader shown until image descriptors are loaded -->
-	<div class="arjs-loader">
-	<div>Loading, please wait...</div>
-	</div>
-  
-  	<div class="proButton" id="image_for_crop">
-	</div>
-	
-	<div class="proButton" id="btnRecord" onclick="startRecording()">
-		<div class="w3-button w3-xlarge w3-circle w3-red w3-card-4">+</div>
-	</div>
-  
+    <!-- minimal loader shown until image descriptors are loaded -->
+    <div class="arjs-loader">
+        <div>Loading, please wait...</div>
+    </div>
+
+    @*<div class="proButton" id="btnRecord" onclick="startRecording()">
+            <div class="w3-button w3-xlarge w3-circle w3-red w3-card-4">+</div>
+        </div>*@
+    <div class="proButton">
+        <div class="recorder-container">
+            <input id="btn" type="checkbox" />
+            <label for="btn"></label>
+            <div class="time">
+                <div class="h_m"></div>
+                <div class="s_ms"></div>
+            </div>
+        </div>
+    </div>
+    
+
     <a-scene vr-mode-ui="enabled: false;"
              renderer="logarithmicDepthBuffer: true;"
              embedded
@@ -76,8 +87,8 @@
         </a-nft>
         <a-entity camera></a-entity>
     </a-scene>
-  
-  <script>
+
+    <script>
         function resizeCanvas(origCanvas, width, height) {
             let resizedCanvas = document.createElement("canvas");
             let resizedContext = resizedCanvas.getContext("2d");
@@ -92,7 +103,6 @@
         function startRecording()
         {
             var canvas = document.getElementsByClassName("a-canvas");
-            //var canvas = document.querySelector(".a-canvas");
             if(canvas.length == 1)
             {
                 var aScene = document.querySelector("a-scene").components.screenshot.getCanvas("perspective");
@@ -101,7 +111,7 @@
                 aScene = resizeCanvas(aScene, frame.height, frame.width);
 	            frame = frame.dataUri;
 
-                mergeImages([frame, aScene])
+                @*mergeImages([frame, aScene])
                     .then(b64 => {
                         $.ajax({
                             url: '@Url.Action("asImage", "Save")',
@@ -114,44 +124,7 @@
                                 alert("ERROR");
                             }
                         });
-                    });
-
-                //var ctx = canvas[0].getContext('webgl');
-                //var image = canvas[0].toDataURL("image/png").replace("image/png", "image/octet-stream");  
-                //window.location.href = image;
-                //var dataURL = canvas[0].toDataURL();
-                //var gl = canvas[0].getContext('webgl');
-                //console.log(gl);
-            
-                //var dataURL = gl.canvas.toDataURL();
-
-                @*var gl = canvas[0].getContext("webgl", {preserveDrawingBuffer: true});
-                var dataURL = canvas[0].toDataURL();*@
-
-                @*$.ajax({
-                    url: '@Url.Action("asImage", "Save")',
-                    type: "POST",
-                    data: { 'base64image': aScene },
-                    success: function (data) {
-                        alert("OK man 6:45");
-                    },
-                    error: function (xhr, error) {
-                        alert("ERROR");
-                    }
-                });
-                $.ajax({
-                    url: '@Url.Action("asImage", "Save")',
-                    type: "POST",
-                    data: { 'base64image': frame },
-                    success: function (data) {
-                        alert("OK man 6:45");
-                    },
-                    error: function (xhr, error) {
-                        alert("ERROR");
-                    }
-                });*@
-                //arSession.parameters.scene
-                //console.log(ARjs.Session.parameters);
+                    });*@
             }
             else
             {
@@ -190,7 +163,7 @@
             var blob = new Blob([ arr ], { type: mimeType });
             return { blob: blob, dataUri: dataUri, format: format, width: canvas.width, height: canvas.height };
         };
-  </script>
-  
+    </script>
+
 </body>
 
